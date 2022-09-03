@@ -4,6 +4,8 @@ import Head from "next/head";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
+import BountyListing from "../src/components/bountyListing";
+import CreateBounty from "../src/components/createBounty";
 
 export default function Home() {
   // Contract Address & ABI
@@ -12,17 +14,6 @@ export default function Home() {
 
   // Component state
   const [currentAccount, setCurrentAccount] = useState("");
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
-  const [memos, setMemos] = useState([]);
-
-  const onNameChange = (event) => {
-    setName(event.target.value);
-  };
-
-  const onMessageChange = (event) => {
-    setMessage(event.target.value);
-  };
 
   // Wallet connection logic
   const isWalletConnected = async () => {
@@ -56,41 +47,6 @@ export default function Home() {
       });
 
       setCurrentAccount(accounts[0]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const buyCoffee = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum, "any");
-        const signer = provider.getSigner();
-        const buyMeACoffee = new ethers.Contract(
-          contractAddress,
-          contractABI,
-          signer
-        );
-
-        console.log("buying coffee..");
-        const coffeeTxn = await buyMeACoffee.buyCoffee(
-          name ? name : "anon",
-          message ? message : "Enjoy your coffee!",
-          { value: ethers.utils.parseEther("0.001") }
-        );
-
-        await coffeeTxn.wait();
-
-        console.log("mined ", coffeeTxn.hash);
-
-        console.log("coffee purchased!");
-
-        // Clear the form fields.
-        setName("");
-        setMessage("");
-      }
     } catch (error) {
       console.log(error);
     }
@@ -166,167 +122,68 @@ export default function Home() {
         <meta name="description" content="W3 Upwork" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          justifyContent: "space-between",
-          height: "48px",
-          borderBottom: "1px solid",
-        }}
-      >
-        <div style={{ display: "flex", gap: "40px" }}>
-          <div>Company Logo</div>
-          <div>Bounty Board</div>
-          <div>Top Bounty Hunters</div>
-        </div>
-        <div>Create a Bounty</div>
-      </div>
-      <main className={styles.main}>
-        {currentAccount ? (
-          <div
+      {!currentAccount && (
+        <>
+          <h1 className={styles.title}>Connect wallet to enter app!</h1>
+          <button
             style={{
-              margin: "0px auto",
-              alignItem: "center",
-              width: "744px",
+              width: "200px",
+              alignSelf: "center",
+              marginTop: "20px",
+              background: "black",
+              color: "white",
+              border: "none",
+              borderRadius: "3px",
+              padding: "8px",
+            }}
+            onClick={connectWallet}
+          >
+            {" "}
+            Connect your wallet{" "}
+          </button>
+        </>
+      )}
+      {currentAccount && (
+        <>
+          <div
+            className="navBar"
+            style={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-between",
+              height: "48px",
+              borderBottom: "1px solid",
             }}
           >
+            <div style={{ display: "flex", gap: "40px" }}>
+              <div>Company Logo</div>
+              <div>Bounty Board</div>
+              <div>Top Bounty Hunters</div>
+            </div>
+            <div>Create a Bounty</div>
+          </div>
+          <main className={styles.main}>
+            {currentAccount && <CreateBounty />}
+          </main>
+
+          <footer className={styles.footer}>
             <div
               style={{
-                fontSize: "32px",
-                textAlign: "center",
-                marginBottom: "20px",
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-between",
               }}
             >
-              Create A Bounty
-            </div>
-            <form>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "16px",
-                  width: "462px",
-                  margin: "0px auto",
-                }}
-              >
-                <input
-                  type="text"
-                  name="title"
-                  id="title"
-                  placeholder="Bounty Title"
-                  style={{
-                    padding: "8px",
-                    border: "1px solid",
-                    borderRadius: "3px",
-                  }}
-                />
-                <input
-                  type="text"
-                  name="value"
-                  id="value"
-                  placeholder="Bounty Value"
-                  style={{
-                    padding: "8px",
-                    border: "1px solid",
-                    borderRadius: "3px",
-                  }}
-                />
-                <select
-                  name="Category"
-                  id="category"
-                  placeholder="Category"
-                  style={{
-                    padding: "8px",
-                    border: "1px solid",
-                    borderRadius: "3px",
-                  }}
-                >
-                  <option value="product">Product</option>
-                  <option value="marketing">Marketing</option>
-                  <option value="news">News</option>
-                </select>
-                <input
-                  type="text"
-                  name="url"
-                  id="url"
-                  placeholder="URL"
-                  style={{
-                    padding: "8px",
-                    border: "1px solid",
-                    borderRadius: "3px",
-                  }}
-                />
-                <textarea
-                  rows={3}
-                  placeholder="Bounty Description"
-                  id="description"
-                  onChange={onMessageChange}
-                  required
-                ></textarea>
-                <button
-                  type="button"
-                  onClick={buyCoffee}
-                  style={{
-                    background: "black",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "3px",
-                    height: "36px",
-                    cursor: "pointer",
-                  }}
-                >
-                  Post this bounty
-                </button>
+              <div>
+                <div>About Us</div>
+                <div>Team</div>
+                <div>History</div>
               </div>
-            </form>
-          </div>
-        ) : (
-          <>
-            <h1 className={styles.title}>Connect wallet to enter app!</h1>
-            <button onClick={connectWallet}> Connect your wallet </button>
-          </>
-        )}
-      </main>
-
-      {/* {currentAccount && <h1>Memos received</h1>} */}
-
-      {/* {currentAccount &&
-        memos.map((memo, idx) => {
-          return (
-            <div
-              key={idx}
-              style={{
-                border: "2px solid",
-                borderRadius: "3px",
-                padding: "5px",
-                margin: "5px",
-              }}
-            >
-              <p style={{ fontWeight: "bold" }}>"{memo.message}"</p>
-              <p>
-                From: {memo.name} at {memo.timestamp.toString()}
-              </p>
+              <div>Company Info</div>
             </div>
-          );
-        })} */}
-
-      <footer className={styles.footer}>
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            <div>About Us</div>
-            <div>Team</div>
-            <div>History</div>
-          </div>
-          <div>Company Info</div>
-        </div>
-      </footer>
+          </footer>
+        </>
+      )}
     </div>
   );
 }
