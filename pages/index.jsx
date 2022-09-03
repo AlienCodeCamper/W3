@@ -1,5 +1,5 @@
 import abi from "../utils/BuyMeACoffee.json";
-import { ethers } from "ethers";
+import { Contract, ethers } from "ethers";
 import Head from "next/head";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -7,14 +7,13 @@ import styles from "../styles/Home.module.css";
 import BountyListing from "../src/components/bountyListing";
 import CreateBounty from "../src/components/createBounty";
 import { minifyAddress } from "../utils/util";
+import { BOUNTY_STATION } from "../utils/constants";
+import { BOUNTY_STATION_ABI } from "../utils/abi";
 
 export default function Home() {
-  // Contract Address & ABI
-  const contractAddress = "0xDBa03676a2fBb6711CB652beF5B7416A53c1421D";
-  const contractABI = abi.abi;
-
   // Component state
   const [currentAccount, setCurrentAccount] = useState("");
+  const [categories, setCategories] = useState();
 
   // Wallet connection logic
   const isWalletConnected = async () => {
@@ -22,16 +21,31 @@ export default function Home() {
       const { ethereum } = window;
 
       const accounts = await ethereum.request({ method: "eth_accounts" });
-      console.log("accounts: ", accounts);
 
       if (accounts.length > 0) {
         const account = accounts[0];
         setCurrentAccount(account);
+        getCategories();
       } else {
         console.log("make sure MetaMask is connected");
       }
     } catch (error) {
       console.log("error: ", error);
+    }
+  };
+
+  const getCategories = async () => {
+    try {
+      const BountyStation = new Contract(
+        BOUNTY_STATION,
+        BOUNTY_STATION_ABI,
+        ethers.getDefaultProvider(4)
+      );
+
+      let categoriess = await BountyStation.getAllCategories();
+      setCategories[categoriess];
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -48,13 +62,13 @@ export default function Home() {
       });
 
       setCurrentAccount(accounts[0]);
+      getCategories();
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    let buyMeACoffee;
     isWalletConnected();
 
     const { ethereum } = window;
