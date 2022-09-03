@@ -1,20 +1,23 @@
 import abi from "../utils/BuyMeACoffee.json";
 import { Contract, ethers } from "ethers";
 import Head from "next/head";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import BountyListing from "../src/components/bountyListing";
-import CreateBounty from "../src/components/createBounty";
 import { minifyAddress } from "../utils/util";
 import { BOUNTY_STATION } from "../utils/constants";
 import { BOUNTY_STATION_ABI } from "../utils/abi";
 import BountyDetail from "../src/components/BountyDetail";
+import { BaseContext, BaseContextProvider } from "../utils/BaseContext";
 
 export default function Home() {
-  // Component state
-  const [currentAccount, setCurrentAccount] = useState("");
-  const [categories, setCategories] = useState();
+  const {
+    currentAccount,
+    categories,
+    bounties,
+    setCategories,
+    setBounties,
+    setCurrentAccount,
+  } = useContext(BaseContext);
 
   // Wallet connection logic
   const isWalletConnected = async () => {
@@ -27,6 +30,7 @@ export default function Home() {
         const account = accounts[0];
         setCurrentAccount(account);
         getCategories();
+        getBounties();
       } else {
         console.log("make sure MetaMask is connected");
       }
@@ -44,7 +48,22 @@ export default function Home() {
       );
 
       let categoriess = await BountyStation.getAllCategories();
-      setCategories[categoriess];
+      setCategories(categoriess);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getBounties = async () => {
+    try {
+      const BountyStation = new Contract(
+        BOUNTY_STATION,
+        BOUNTY_STATION_ABI,
+        ethers.getDefaultProvider(4)
+      );
+
+      let bounties = await BountyStation.getAllBounties();
+      setBounties(bounties);
     } catch (error) {
       console.error(error);
     }
@@ -64,6 +83,7 @@ export default function Home() {
 
       setCurrentAccount(accounts[0]);
       getCategories();
+      getBounties();
     } catch (error) {
       console.log(error);
     }

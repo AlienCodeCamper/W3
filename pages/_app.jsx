@@ -1,7 +1,12 @@
-import '../styles/globals.css'
+import "../styles/globals.css";
+import { BaseContextProvider } from "../utils/BaseContext";
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  return (
+    <BaseContextProvider>
+      <Component {...pageProps} />
+    </BaseContextProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;
