@@ -8,6 +8,7 @@ import { BOUNTY_STATION } from "../utils/constants";
 import { BOUNTY_STATION_ABI } from "../utils/abi";
 import BountyDetail from "../src/components/BountyDetail";
 import { BaseContext, BaseContextProvider } from "../utils/BaseContext";
+import Link from "next/link";
 
 export default function Home() {
   const {
@@ -146,8 +147,10 @@ export default function Home() {
               <div>Company Logo</div>
               <div>Ongoing Bounties</div>
               <div>Bounty Board</div>
-              <button
+              <Link
+                href={"/create"}
                 style={{
+                  display: "block",
                   background: "black",
                   color: "white",
                   border: "none",
@@ -157,7 +160,7 @@ export default function Home() {
                 }}
               >
                 Create a Bounty
-              </button>
+              </Link>
             </div>
             <div>Connected: {minifyAddress(currentAccount)} </div>
           </div>
