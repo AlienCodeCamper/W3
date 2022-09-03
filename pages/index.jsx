@@ -1,20 +1,20 @@
 import abi from "../utils/BuyMeACoffee.json";
-import { ethers } from "ethers";
+import { Contract, ethers } from "ethers";
 import Head from "next/head";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import BountyListing from "../src/components/bountyListing";
 import CreateBounty from "../src/components/createBounty";
+import { minifyAddress } from "../utils/util";
+import { BOUNTY_STATION } from "../utils/constants";
+import { BOUNTY_STATION_ABI } from "../utils/abi";
 import BountyDetail from "../src/components/BountyDetail";
 
 export default function Home() {
-  // Contract Address & ABI
-  const contractAddress = "0xDBa03676a2fBb6711CB652beF5B7416A53c1421D";
-  const contractABI = abi.abi;
-
   // Component state
   const [currentAccount, setCurrentAccount] = useState("");
+  const [categories, setCategories] = useState();
 
   // Wallet connection logic
   const isWalletConnected = async () => {
@@ -22,16 +22,31 @@ export default function Home() {
       const { ethereum } = window;
 
       const accounts = await ethereum.request({ method: "eth_accounts" });
-      console.log("accounts: ", accounts);
 
       if (accounts.length > 0) {
         const account = accounts[0];
-        console.log("wallet is connected! " + account);
+        setCurrentAccount(account);
+        getCategories();
       } else {
         console.log("make sure MetaMask is connected");
       }
     } catch (error) {
       console.log("error: ", error);
+    }
+  };
+
+  const getCategories = async () => {
+    try {
+      const BountyStation = new Contract(
+        BOUNTY_STATION,
+        BOUNTY_STATION_ABI,
+        ethers.getDefaultProvider(4)
+      );
+
+      let categoriess = await BountyStation.getAllCategories();
+      setCategories[categoriess];
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -48,55 +63,14 @@ export default function Home() {
       });
 
       setCurrentAccount(accounts[0]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Function to fetch all memos stored on-chain.
-  const getMemos = async () => {
-    try {
-      const { ethereum } = window;
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const buyMeACoffee = new ethers.Contract(
-          contractAddress,
-          contractABI,
-          signer
-        );
-
-        console.log("fetching memos from the blockchain..");
-        const memos = await buyMeACoffee.getMemos();
-        console.log("fetched!");
-        setMemos(memos);
-      } else {
-        console.log("Metamask is not connected");
-      }
+      getCategories();
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    let buyMeACoffee;
     isWalletConnected();
-    getMemos();
-
-    // Create an event handler function for when someone sends
-    // us a new memo.
-    const onNewMemo = (from, timestamp, name, message) => {
-      console.log("Memo received: ", from, timestamp, name, message);
-      setMemos((prevState) => [
-        ...prevState,
-        {
-          address: from,
-          timestamp: new Date(timestamp * 1000),
-          message,
-          name,
-        },
-      ]);
-    };
 
     const { ethereum } = window;
 
@@ -104,16 +78,7 @@ export default function Home() {
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum, "any");
       const signer = provider.getSigner();
-      buyMeACoffee = new ethers.Contract(contractAddress, contractABI, signer);
-
-      buyMeACoffee.on("NewMemo", onNewMemo);
     }
-
-    return () => {
-      if (buyMeACoffee) {
-        buyMeACoffee.off("NewMemo", onNewMemo);
-      }
-    };
   }, []);
 
   return (
@@ -159,15 +124,16 @@ export default function Home() {
             <div style={{ display: "flex", gap: "40px" }}>
               <div>Company Logo</div>
               <div>Bounty Board</div>
-              <div>Top Bounty Hunters</div>
+              {/* <div>Top Bounty Hunters</div> */}
             </div>
             <div>Create a Bounty</div>
+            <div>Connected: {minifyAddress(currentAccount)} </div>
           </div>
           <main className={styles.main}>
             {currentAccount && <BountyDetail />}
           </main>
 
-          <footer className={styles.footer}>
+          {/* <footer className={styles.footer}>
             <div
               style={{
                 display: "flex",
@@ -182,7 +148,7 @@ export default function Home() {
               </div>
               <div>Company Info</div>
             </div>
-          </footer>
+          </footer> */}
         </>
       )}
     </div>
