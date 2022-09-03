@@ -1,12 +1,26 @@
-export default function BountyListing() {
+export default function OngoingBounties() {
   return (
     <div style={{ marginTop: "32px" }}>
-      <div style={{ fontSize: "16px" }}>
-        Bounty Board{" "}
-        <select name="bountyType" id="bountyType">
-          <option value="All">All</option>
-          <option value="Your">Your</option>
-        </select>
+      <div style={{ fontSize: "20px" }}>
+        Ongoing Bounties
+        <span
+          style={{
+            fontSize: "14px",
+            marginLeft: "16px",
+            cursor: "pointer",
+          }}
+        >
+          Bounties Posted
+        </span>
+        <span
+          style={{
+            fontSize: "14px",
+            marginLeft: "16px",
+            cursor: "pointer",
+          }}
+        >
+          Bounties Applied
+        </span>
       </div>
       <div
         className="bountyCard"
