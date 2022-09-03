@@ -1,9 +1,9 @@
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import styles from "../../styles/Home.module.css";
-import BountyDetail from "../../src/components/BountyDetail";
-import { Navbar } from "../../src/components/Navbar";
+import styles from "../../../styles/Home.module.css";
+import BountyDetail from "../../../src/components/BountyDetail";
+import { Navbar } from "../../../src/components/Navbar";
 
 export default function Bounty() {
   const { query } = useRouter();
