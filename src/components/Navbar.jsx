@@ -19,8 +19,8 @@ export function Navbar() {
     >
       <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
         <div>Company Logo</div>
-        <div>Ongoing Bounties</div>
-        <div>Bounty Board</div>
+        <Link href={"/"}>Ongoing Bounties</Link>
+        <Link href={"/"}>Bounty Board</Link>
         <Link
           href={"/create"}
           style={{
