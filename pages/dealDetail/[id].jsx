@@ -1,5 +1,5 @@
 import Head from "next/head";
-import DealDetail from "../../src/components/DealDetail";
+import DealDetails from "../../src/components/DealDetails";
 import { Navbar } from "../../src/components/Navbar";
 import styles from "../../styles/Home.module.css";
 import { useRouter } from "next/router";
@@ -35,7 +35,7 @@ export default function dealDetail() {
       </Head>
       <Navbar />
       <main className={styles.main}>
-        <DealDetail />
+        <DealDetails />
       </main>
     </div>
   );

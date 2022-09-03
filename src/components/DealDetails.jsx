@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { BaseContext, BaseContextProvider } from "../../utils/BaseContext";
 import { formatUnits } from "ethers/lib/utils";
 
-export default function BountyDetail() {
+export default function DealDetails() {
   const {
     currentAccount,
     categories,
