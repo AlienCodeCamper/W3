@@ -172,6 +172,7 @@ export default function Home() {
           width: "100%",
           justifyContent: "space-between",
           height: "48px",
+          borderBottom: "1px solid",
         }}
       >
         <div style={{ display: "flex", gap: "40px" }}>
@@ -183,35 +184,99 @@ export default function Home() {
       </div>
       <main className={styles.main}>
         {currentAccount ? (
-          <div>
+          <div
+            style={{
+              margin: "0px auto",
+              alignItem: "center",
+              width: "744px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "32px",
+                textAlign: "center",
+                marginBottom: "20px",
+              }}
+            >
+              Create A Bounty
+            </div>
             <form>
-              <div>
-                <label>Name</label>
-                <br />
-
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                  width: "462px",
+                  margin: "0px auto",
+                }}
+              >
                 <input
-                  id="name"
                   type="text"
-                  placeholder="anon"
-                  onChange={onNameChange}
+                  name="title"
+                  id="title"
+                  placeholder="Bounty Title"
+                  style={{
+                    padding: "8px",
+                    border: "1px solid",
+                    borderRadius: "3px",
+                  }}
                 />
-              </div>
-              <br />
-              <div>
-                <label>Send Albert a message</label>
-                <br />
-
+                <input
+                  type="text"
+                  name="value"
+                  id="value"
+                  placeholder="Bounty Value"
+                  style={{
+                    padding: "8px",
+                    border: "1px solid",
+                    borderRadius: "3px",
+                  }}
+                />
+                <select
+                  name="Category"
+                  id="category"
+                  placeholder="Category"
+                  style={{
+                    padding: "8px",
+                    border: "1px solid",
+                    borderRadius: "3px",
+                  }}
+                >
+                  <option value="product">Product</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="news">News</option>
+                </select>
+                <input
+                  type="text"
+                  name="url"
+                  id="url"
+                  placeholder="URL"
+                  style={{
+                    padding: "8px",
+                    border: "1px solid",
+                    borderRadius: "3px",
+                  }}
+                />
                 <textarea
                   rows={3}
-                  placeholder="Enjoy your coffee!"
-                  id="message"
+                  placeholder="Bounty Description"
+                  id="description"
                   onChange={onMessageChange}
                   required
                 ></textarea>
-              </div>
-              <div>
-                <button type="button" onClick={buyCoffee}>
-                  Send 1 Coffee for 0.001ETH
+                <button
+                  type="button"
+                  onClick={buyCoffee}
+                  style={{
+                    background: "black",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "3px",
+                    height: "36px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Post this bounty
                 </button>
               </div>
             </form>
@@ -233,7 +298,7 @@ export default function Home() {
               key={idx}
               style={{
                 border: "2px solid",
-                borderRadius: "5px",
+                borderRadius: "3px",
                 padding: "5px",
                 margin: "5px",
               }}
