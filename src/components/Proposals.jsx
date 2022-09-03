@@ -111,7 +111,7 @@ export default function Proposals() {
                 </div>
               ) : (
                 <div style={{ fontSize: "12px" }}>
-                  The bounty hunder hasn't submitter any task.
+                  The bounty hunder hasnt submitter any task.
                 </div>
               )}
             </div>
