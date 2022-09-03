@@ -3,6 +3,7 @@ import { formatUnits } from "ethers/lib/utils";
 import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { BaseContext, BaseContextProvider } from "../../utils/BaseContext";
+import Link from "next/link";
 
 export default function BountyListing() {
   const {
@@ -13,7 +14,6 @@ export default function BountyListing() {
     setBounties,
     setCurrentAccount,
   } = useContext(BaseContext);
-  console.log({ currentAccount, categories, bounties });
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const handleChangeCategory = (e) => {
