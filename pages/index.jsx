@@ -1,9 +1,9 @@
-import abi from '../utils/BuyMeACoffee.json';
+import abi from "../utils/BuyMeACoffee.json";
 import { ethers } from "ethers";
-import Head from 'next/head'
-import Image from 'next/image'
+import Head from "next/head";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import styles from '../styles/Home.module.css'
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
   // Contract Address & ABI
@@ -18,18 +18,18 @@ export default function Home() {
 
   const onNameChange = (event) => {
     setName(event.target.value);
-  }
+  };
 
   const onMessageChange = (event) => {
     setMessage(event.target.value);
-  }
+  };
 
   // Wallet connection logic
   const isWalletConnected = async () => {
     try {
       const { ethereum } = window;
 
-      const accounts = await ethereum.request({method: 'eth_accounts'})
+      const accounts = await ethereum.request({ method: "eth_accounts" });
       console.log("accounts: ", accounts);
 
       if (accounts.length > 0) {
@@ -41,29 +41,29 @@ export default function Home() {
     } catch (error) {
       console.log("error: ", error);
     }
-  }
+  };
 
   const connectWallet = async () => {
     try {
-      const {ethereum} = window;
+      const { ethereum } = window;
 
       if (!ethereum) {
         console.log("please install MetaMask");
       }
 
       const accounts = await ethereum.request({
-        method: 'eth_requestAccounts'
+        method: "eth_requestAccounts",
       });
 
       setCurrentAccount(accounts[0]);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const buyCoffee = async () => {
     try {
-      const {ethereum} = window;
+      const { ethereum } = window;
 
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum, "any");
@@ -74,11 +74,11 @@ export default function Home() {
           signer
         );
 
-        console.log("buying coffee..")
+        console.log("buying coffee..");
         const coffeeTxn = await buyMeACoffee.buyCoffee(
           name ? name : "anon",
           message ? message : "Enjoy your coffee!",
-          {value: ethers.utils.parseEther("0.001")}
+          { value: ethers.utils.parseEther("0.001") }
         );
 
         await coffeeTxn.wait();
@@ -108,7 +108,7 @@ export default function Home() {
           contractABI,
           signer
         );
-        
+
         console.log("fetching memos from the blockchain..");
         const memos = await buyMeACoffee.getMemos();
         console.log("fetched!");
@@ -116,12 +116,11 @@ export default function Home() {
       } else {
         console.log("Metamask is not connected");
       }
-      
     } catch (error) {
       console.log(error);
     }
   };
-  
+
   useEffect(() => {
     let buyMeACoffee;
     isWalletConnected();
@@ -137,22 +136,18 @@ export default function Home() {
           address: from,
           timestamp: new Date(timestamp * 1000),
           message,
-          name
-        }
+          name,
+        },
       ]);
     };
 
-    const {ethereum} = window;
+    const { ethereum } = window;
 
     // Listen for new memo events.
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum, "any");
       const signer = provider.getSigner();
-      buyMeACoffee = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
+      buyMeACoffee = new ethers.Contract(contractAddress, contractABI, signer);
 
       buyMeACoffee.on("NewMemo", onNewMemo);
     }
@@ -161,44 +156,50 @@ export default function Home() {
       if (buyMeACoffee) {
         buyMeACoffee.off("NewMemo", onNewMemo);
       }
-    }
+    };
   }, []);
-  
+
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ padding: "30px 150px" }}>
       <Head>
-        <title>Buy Albert a Coffee!</title>
-        <meta name="description" content="Tipping site" />
+        <title>W3</title>
+        <meta name="description" content="W3 Upwork" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          justifyContent: "space-between",
+          height: "48px",
+        }}
+      >
+        <div style={{ display: "flex", gap: "40px" }}>
+          <div>Company Logo</div>
+          <div>Bounty Board</div>
+          <div>Top Bounty Hunters</div>
+        </div>
+        <div>Create a Bounty</div>
+      </div>
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Buy Albert a Coffee!
-        </h1>
-        
         {currentAccount ? (
           <div>
             <form>
               <div>
-                <label>
-                  Name
-                </label>
-                <br/>
-                
+                <label>Name</label>
+                <br />
+
                 <input
                   id="name"
                   type="text"
                   placeholder="anon"
                   onChange={onNameChange}
-                  />
+                />
               </div>
-              <br/>
+              <br />
               <div>
-                <label>
-                  Send Albert a message
-                </label>
-                <br/>
+                <label>Send Albert a message</label>
+                <br />
 
                 <textarea
                   rows={3}
@@ -206,44 +207,61 @@ export default function Home() {
                   id="message"
                   onChange={onMessageChange}
                   required
-                >
-                </textarea>
+                ></textarea>
               </div>
               <div>
-                <button
-                  type="button"
-                  onClick={buyCoffee}
-                >
+                <button type="button" onClick={buyCoffee}>
                   Send 1 Coffee for 0.001ETH
                 </button>
               </div>
             </form>
           </div>
         ) : (
-          <button onClick={connectWallet}> Connect your wallet </button>
+          <>
+            <h1 className={styles.title}>Connect wallet to enter app!</h1>
+            <button onClick={connectWallet}> Connect your wallet </button>
+          </>
         )}
       </main>
 
-      {currentAccount && (<h1>Memos received</h1>)}
+      {/* {currentAccount && <h1>Memos received</h1>} */}
 
-      {currentAccount && (memos.map((memo, idx) => {
-        return (
-          <div key={idx} style={{border:"2px solid", "borderRadius":"5px", padding: "5px", margin: "5px"}}>
-            <p style={{"fontWeight":"bold"}}>"{memo.message}"</p>
-            <p>From: {memo.name} at {memo.timestamp.toString()}</p>
-          </div>
-        )
-      }))}
+      {/* {currentAccount &&
+        memos.map((memo, idx) => {
+          return (
+            <div
+              key={idx}
+              style={{
+                border: "2px solid",
+                borderRadius: "5px",
+                padding: "5px",
+                margin: "5px",
+              }}
+            >
+              <p style={{ fontWeight: "bold" }}>"{memo.message}"</p>
+              <p>
+                From: {memo.name} at {memo.timestamp.toString()}
+              </p>
+            </div>
+          );
+        })} */}
 
       <footer className={styles.footer}>
-        <a
-          href="https://alchemy.com/?a=roadtoweb3weektwo"
-          target="_blank"
-          rel="noopener noreferrer"
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "space-between",
+          }}
         >
-          Created by @thatguyintech for Alchemy's Road to Web3 lesson two!
-        </a>
+          <div>
+            <div>About Us</div>
+            <div>Team</div>
+            <div>History</div>
+          </div>
+          <div>Company Info</div>
+        </div>
       </footer>
     </div>
-  )
+  );
 }
