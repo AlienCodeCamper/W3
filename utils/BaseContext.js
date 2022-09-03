@@ -12,6 +12,7 @@ export const BaseContextProvider = (props) => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [categories, setCategories] = useState([]);
   const [bounties, setBounties] = useState([]);
+  const [activeBounty, setActiveBounty] = useState(null);
 
   return (
     <BaseContext.Provider
@@ -19,9 +20,11 @@ export const BaseContextProvider = (props) => {
         currentAccount,
         categories,
         bounties,
+        activeBounty,
         setCategories,
         setBounties,
         setCurrentAccount,
+        setActiveBounty,
       }}
     >
       {props.children}

@@ -1,9 +1,24 @@
 import Proposals from "./Proposals";
+import React, { useContext, useEffect, useState } from "react";
+import { BaseContext, BaseContextProvider } from "../../utils/BaseContext";
+import { formatUnits } from "ethers/lib/utils";
 
 export default function BountyDetail() {
+  const {
+    currentAccount,
+    categories,
+    bounties,
+    setCategories,
+    setBounties,
+    setCurrentAccount,
+    activeBounty,
+    setActiveBounty,
+  } = useContext(BaseContext);
+  console.log({ currentAccount, categories, bounties });
+  console.log({ activeBounty });
   return (
     <div style={{ marginTop: "32px" }}>
-      <div style={{ fontSize: "20px" }}>Bounty Title</div>
+      <div style={{ fontSize: "20px" }}>{activeBounty.bountyTitle}</div>
       <div
         style={{
           marginTop: "20px",
@@ -15,7 +30,7 @@ export default function BountyDetail() {
             cursor: "pointer",
           }}
         >
-          Posted by: address.eth
+          Posted by: {activeBounty.bountyCreator}
         </span>
         <span
           style={{
@@ -24,7 +39,7 @@ export default function BountyDetail() {
             cursor: "pointer",
           }}
         >
-          Category
+          {categories[activeBounty.bountyCategory.toNumber()]?.categoryName}
         </span>
         <span
           style={{
@@ -49,21 +64,18 @@ export default function BountyDetail() {
           marginTop: "20px",
         }}
       >
-        <div style={{ fontSize: "24px" }}>1.2 ETH</div>
+        <div style={{ fontSize: "24px" }}>
+          {formatUnits(activeBounty.bountyValueETH)}
+        </div>
         <div style={{ fontSize: "12px", marginTop: "5px" }}>Bounty Value</div>
       </div>
       <div style={{ marginTop: "20px" }}>
         <div style={{ fontSize: "20px" }}>Bounty Description</div>
-        <div>
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Molestias,
-          eveniet eligendi laudantium pariatur assumenda voluptate quaerat
-          asperiores aut illum, quod necessitatibus saepe! Quibusdam maiores
-          fugiat magnam, blanditiis ipsam sed deserunt.
-        </div>
+        <div>{activeBounty.bountyDescription}</div>
       </div>
       <div style={{ marginTop: "20px" }}>
         <div style={{ fontSize: "20px" }}>Resources</div>
-        <div>bountynew.xyz</div>
+        <div>{activeBounty.bountyLink}</div>
       </div>
       <Proposals />
     </div>
