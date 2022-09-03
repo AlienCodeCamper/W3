@@ -1,3 +1,4 @@
+import { Contract, ethers } from "ethers";
 import React, {
   createContext,
   useCallback,
@@ -5,6 +6,8 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { BOUNTY_STATION_ABI } from "./abi";
+import { BOUNTY_STATION } from "./constants";
 
 export const BaseContext = createContext({});
 
@@ -24,6 +27,7 @@ export const BaseContextProvider = (props) => {
         setCategories,
         setBounties,
         setCurrentAccount,
+        connectWallet,
         setActiveBounty,
       }}
     >

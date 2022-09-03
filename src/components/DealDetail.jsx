@@ -1,24 +1,20 @@
+import { formatEther } from "ethers/lib/utils";
+import Link from "next/link";
+import { useContext, useEffect, useState } from "react";
+import { BaseContext } from "../../utils/BaseContext";
+import { minifyAddress } from "../../utils/util";
 import Proposals from "./Proposals";
-import React, { useContext, useEffect, useState } from "react";
-import { BaseContext, BaseContextProvider } from "../../utils/BaseContext";
-import { formatUnits } from "ethers/lib/utils";
+import SubmitProposal from "./SubmitProposal";
 
-export default function BountyDetail() {
-  const {
-    currentAccount,
-    categories,
-    bounties,
-    setCategories,
-    setBounties,
-    setCurrentAccount,
-    activeBounty,
-    setActiveBounty,
-  } = useContext(BaseContext);
-  console.log({ currentAccount, categories, bounties });
-  console.log({ activeBounty });
-  return (
+export default function BountyDetail({ bountyId }) {
+  const { bounties, categories } = useContext(BaseContext);
+
+  let bounty = bounties.filter((b) => b.bountyId.toNumber() == bountyId)[0];
+  console.log({ categories, bounties, bounty });
+
+  return bounty && categories ? (
     <div style={{ marginTop: "32px" }}>
-      <div style={{ fontSize: "20px" }}>{activeBounty.bountyTitle}</div>
+      <div style={{ fontSize: "20px" }}>{bounty.bountyTitle}</div>
       <div
         style={{
           marginTop: "20px",
@@ -30,7 +26,7 @@ export default function BountyDetail() {
             cursor: "pointer",
           }}
         >
-          Posted by: {activeBounty.bountyCreator}
+          Posted by: {minifyAddress(bounty.bountyCreator)}
         </span>
         <span
           style={{
@@ -39,9 +35,9 @@ export default function BountyDetail() {
             cursor: "pointer",
           }}
         >
-          {categories[activeBounty.bountyCategory.toNumber()]?.categoryName}
+          {categories[bounty.bountyCategory].categoryName}
         </span>
-        <span
+        {/* <span
           style={{
             fontSize: "14px",
             marginLeft: "16px",
@@ -49,7 +45,7 @@ export default function BountyDetail() {
           }}
         >
           Posted 5 mins ago
-        </span>
+        </span> */}
       </div>
       <div
         className="bountyCard"
@@ -65,19 +61,42 @@ export default function BountyDetail() {
         }}
       >
         <div style={{ fontSize: "24px" }}>
-          {formatUnits(activeBounty.bountyValueETH)}
+          {formatEther(bounty.bountyValueETH)} ETH
         </div>
         <div style={{ fontSize: "12px", marginTop: "5px" }}>Bounty Value</div>
       </div>
       <div style={{ marginTop: "20px" }}>
         <div style={{ fontSize: "20px" }}>Bounty Description</div>
-        <div>{activeBounty.bountyDescription}</div>
+        <div>{bounty.bountyDescription}</div>
       </div>
       <div style={{ marginTop: "20px" }}>
-        <div style={{ fontSize: "20px" }}>Resources</div>
-        <div>{activeBounty.bountyLink}</div>
+        <div style={{ fontSize: "20px" }}>Link</div>
+        <div>{bounty.bountyLink}</div>
       </div>
-      <Proposals />
+
+      <Link passHref href={`/bounty/${bountyId}/propose`}>
+        <button
+          style={{
+            marginTop: "20px",
+            display: "block",
+            padding: "16px 24px",
+            fontFamily: "DM Sans",
+            fonStyle: "normal",
+            fontWeight: 700,
+            fontSize: "16px",
+            lineHeight: "26px",
+            width: "189px",
+            height: "56px",
+            color: "white",
+            background: "#000000",
+            borderRadius: "8px",
+          }}
+        >
+          Submit a Proposal
+        </button>
+      </Link>
     </div>
+  ) : (
+    <>Loading...</>
   );
 }

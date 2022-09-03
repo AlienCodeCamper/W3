@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
+import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { BaseContext, BaseContextProvider } from "../../utils/BaseContext";
 import Link from "next/link";
@@ -31,7 +32,11 @@ export default function BountyListing() {
         >
           <option value={"all"}>All</option>
           {categories?.map((category, i) => {
-            return <option value={i}>{category.categoryName}</option>;
+            return (
+              <option key={i} value={i}>
+                {category.categoryName}
+              </option>
+            );
           })}
         </select>
       </div>
@@ -46,7 +51,11 @@ export default function BountyListing() {
         })
         .map((bounty, i) => {
           return (
-            <Link href={`/dealDetail/[id]`} as={`/dealDetail/${i}`}>
+            <Link
+              key={bounty.bountyId}
+              passHref
+              href={`/bounty/${bounty.bountyId}`}
+            >
               <div
                 className="bountyCard"
                 style={{
@@ -56,6 +65,7 @@ export default function BountyListing() {
                   border: "1px solid",
                   borderRadius: "2px",
                   marginTop: "20px",
+                  cursor: "pointer",
                 }}
               >
                 <div
