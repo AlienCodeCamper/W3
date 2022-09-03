@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import BountyListing from "../src/components/bountyListing";
 import CreateBounty from "../src/components/createBounty";
+import { minifyAddress } from "../utils/util";
 
 export default function Home() {
   // Contract Address & ABI
@@ -25,7 +26,7 @@ export default function Home() {
 
       if (accounts.length > 0) {
         const account = accounts[0];
-        console.log("wallet is connected! " + account);
+        setCurrentAccount(account);
       } else {
         console.log("make sure MetaMask is connected");
       }
@@ -52,50 +53,9 @@ export default function Home() {
     }
   };
 
-  // Function to fetch all memos stored on-chain.
-  const getMemos = async () => {
-    try {
-      const { ethereum } = window;
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const buyMeACoffee = new ethers.Contract(
-          contractAddress,
-          contractABI,
-          signer
-        );
-
-        console.log("fetching memos from the blockchain..");
-        const memos = await buyMeACoffee.getMemos();
-        console.log("fetched!");
-        setMemos(memos);
-      } else {
-        console.log("Metamask is not connected");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     let buyMeACoffee;
     isWalletConnected();
-    getMemos();
-
-    // Create an event handler function for when someone sends
-    // us a new memo.
-    const onNewMemo = (from, timestamp, name, message) => {
-      console.log("Memo received: ", from, timestamp, name, message);
-      setMemos((prevState) => [
-        ...prevState,
-        {
-          address: from,
-          timestamp: new Date(timestamp * 1000),
-          message,
-          name,
-        },
-      ]);
-    };
 
     const { ethereum } = window;
 
@@ -103,16 +63,7 @@ export default function Home() {
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum, "any");
       const signer = provider.getSigner();
-      buyMeACoffee = new ethers.Contract(contractAddress, contractABI, signer);
-
-      buyMeACoffee.on("NewMemo", onNewMemo);
     }
-
-    return () => {
-      if (buyMeACoffee) {
-        buyMeACoffee.off("NewMemo", onNewMemo);
-      }
-    };
   }, []);
 
   return (
@@ -158,15 +109,16 @@ export default function Home() {
             <div style={{ display: "flex", gap: "40px" }}>
               <div>Company Logo</div>
               <div>Bounty Board</div>
-              <div>Top Bounty Hunters</div>
+              {/* <div>Top Bounty Hunters</div> */}
             </div>
             <div>Create a Bounty</div>
+            <div>Connected: {minifyAddress(currentAccount)} </div>
           </div>
           <main className={styles.main}>
             {currentAccount && <CreateBounty />}
           </main>
 
-          <footer className={styles.footer}>
+          {/* <footer className={styles.footer}>
             <div
               style={{
                 display: "flex",
@@ -181,7 +133,7 @@ export default function Home() {
               </div>
               <div>Company Info</div>
             </div>
-          </footer>
+          </footer> */}
         </>
       )}
     </div>
