@@ -1,47 +1,58 @@
-import React, { useEffect, useState } from "react";
+import { BigNumber, ethers, getDefaultProvider } from "ethers";
+import { parseEther, parseUnits } from "ethers/lib/utils";
+import React, { useContext, useEffect, useState } from "react";
+import { BOUNTY_STATION_ABI } from "../../utils/abi";
+import { BaseContext } from "../../utils/BaseContext";
+import { BOUNTY_STATION } from "../../utils/constants";
 
 export default function CreateBounty() {
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
-  const [memos, setMemos] = useState([]);
+  const [title, setTitle] = useState("");
+  const [value, setBountyValue] = useState();
+  const [link, setBountyLink] = useState("");
+  const [category, setBountyCategory] = useState("");
+  const [description, setDescription] = useState();
 
-  const onNameChange = (event) => {
-    setName(event.target.value);
-  };
+  const { categories } = useContext(BaseContext);
 
-  const onMessageChange = (event) => {
-    setMessage(event.target.value);
-  };
+  // const buyCoffee = async () => {
+  // };
 
-  const buyCoffee = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let ethValue = parseEther(value);
+
     try {
       const { ethereum } = window;
 
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum, "any");
+
         const signer = provider.getSigner();
-        const buyMeACoffee = new ethers.Contract(
-          contractAddress,
-          contractABI,
+        const bountyStation = new ethers.Contract(
+          BOUNTY_STATION,
+          BOUNTY_STATION_ABI,
           signer
         );
 
-        console.log("buying coffee..");
-        const coffeeTxn = await buyMeACoffee.buyCoffee(
-          name ? name : "anon",
-          message ? message : "Enjoy your coffee!",
-          { value: ethers.utils.parseEther("0.001") }
+        console.log("Creating Bounty...");
+        const createTx = await bountyStation.createBounty(
+          title,
+          description,
+          link,
+          BigNumber.from(category),
+          ethValue,
+          {
+            value: ethValue,
+          }
         );
 
-        await coffeeTxn.wait();
+        await createTx.wait();
 
-        console.log("mined ", coffeeTxn.hash);
+        console.log("mined ", createTx.hash);
 
-        console.log("coffee purchased!");
+        console.log("Bounty Created!");
 
         // Clear the form fields.
-        setName("");
-        setMessage("");
       }
     } catch (error) {
       console.log(error);
@@ -63,9 +74,9 @@ export default function CreateBounty() {
           marginBottom: "20px",
         }}
       >
-        Create A Bounty
+        Create A new Bounty
       </div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div
           style={{
             display: "flex",
@@ -80,6 +91,7 @@ export default function CreateBounty() {
             name="title"
             id="title"
             placeholder="Bounty Title"
+            onChange={(e) => setTitle(e.target.value)}
             style={{
               padding: "8px",
               border: "1px solid",
@@ -90,7 +102,8 @@ export default function CreateBounty() {
             type="text"
             name="value"
             id="value"
-            placeholder="Bounty Value"
+            placeholder="Bounty Value (in ETH)"
+            onChange={(e) => setBountyValue(e.target.value)}
             style={{
               padding: "8px",
               border: "1px solid",
@@ -101,21 +114,28 @@ export default function CreateBounty() {
             name="Category"
             id="category"
             placeholder="Category"
+            onChange={(e) => setBountyCategory(e.target.value)}
             style={{
               padding: "8px",
               border: "1px solid",
               borderRadius: "3px",
             }}
           >
-            <option value="product">Product</option>
-            <option value="marketing">Marketing</option>
-            <option value="news">News</option>
+            <option disabled>Select Category</option>
+            {categories.map((cat, i) => {
+              return (
+                <option key={i} value={i}>
+                  {cat.categoryName}
+                </option>
+              );
+            })}
           </select>
           <input
             type="text"
             name="url"
             id="url"
             placeholder="URL"
+            onChange={(e) => setBountyLink(e.target.value)}
             style={{
               padding: "8px",
               border: "1px solid",
@@ -126,12 +146,11 @@ export default function CreateBounty() {
             rows={3}
             placeholder="Bounty Description"
             id="description"
-            onChange={onMessageChange}
+            onChange={(e) => setDescription(e.target.value)}
             required
           ></textarea>
           <button
-            type="button"
-            onClick={buyCoffee}
+            type="submit"
             style={{
               background: "black",
               color: "white",
