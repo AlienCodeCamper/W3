@@ -7,7 +7,8 @@ import { minifyAddress } from "../utils/util";
 import { BOUNTY_STATION } from "../utils/constants";
 import { BOUNTY_STATION_ABI } from "../utils/abi";
 import BountyDetail from "../src/components/BountyDetail";
-import { BaseContext } from "../utils/BaseContext";
+import BountyListing from "../src/components/BountyListing";
+import { BaseContext, BaseContextProvider } from "../utils/BaseContext";
 import Link from "next/link";
 import { Navbar } from "../src/components/Navbar";
 
@@ -20,7 +21,6 @@ export default function Home() {
     setBounties,
     setCurrentAccount,
   } = useContext(BaseContext);
-
   // Wallet connection logic
   const isWalletConnected = async () => {
     try {
@@ -135,7 +135,7 @@ export default function Home() {
         <>
           <Navbar />
           <main className={styles.main}>
-            {currentAccount && <BountyDetail />}
+            {currentAccount && <BountyListing />}
           </main>
 
           {/* <footer className={styles.footer}>
