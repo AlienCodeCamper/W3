@@ -117,16 +117,28 @@ export default function Home() {
               display: "flex",
               width: "100%",
               justifyContent: "space-between",
+              alignItems: "center",
               height: "48px",
               borderBottom: "1px solid",
             }}
           >
-            <div style={{ display: "flex", gap: "40px" }}>
+            <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
               <div>Company Logo</div>
+              <div>Ongoing Bounties</div>
               <div>Bounty Board</div>
-              {/* <div>Top Bounty Hunters</div> */}
+              <button
+                style={{
+                  background: "black",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "3px",
+                  cursor: "pointer",
+                  padding: "8px",
+                }}
+              >
+                Create a Bounty
+              </button>
             </div>
-            <div>Create a Bounty</div>
             <div>Connected: {minifyAddress(currentAccount)} </div>
           </div>
           <main className={styles.main}>
